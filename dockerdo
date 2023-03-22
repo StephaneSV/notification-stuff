@@ -1,0 +1,155 @@
+#!/bin/bash -e
+
+DATE=$(date +%Y-%m-%d)
+FOLDER=$(basename "echo $PWD")
+# Export User id and Group id for workspace container
+puid=$(id -u)
+pgid=$(id -g)
+export puid
+export pgid
+
+help() {
+    echo "################################### USAGE ###################################"
+    echo "help                  : Display this help"
+    echo "fresh_install         : Clear everything, build and launch all containers,"
+    echo "                        and install your environment"
+    echo "up                    : Build and launch all containers"
+    echo "start                 : start all stopped containers"
+    echo "stop                  : Stop all containers"
+    echo "down                  : Stop and destroy all containers"
+    echo "upfresh               : refresh all containers"
+    echo "composerinstall       : Run composer install"
+    echo "webcli                : Access to your web container in bash"
+    echo "mysqlcli              : Access to your SQL container bash"
+    echo "sql                   : Access to your SQL prompt"
+    echo ""
+    echo "######################### PROJECT SPECIFIC COMMANDS #########################"
+    echo "quicksave             : creates a mysql dump named quickdump.sql"
+    echo "quickload             : load the dump quickdump.sql"
+    return 1
+}
+
+fresh_install() {
+    down
+    # Clearing all in data, which means wipe of all databases
+    checkdata=$(ls docker/data/)
+    if [ ! -z "$checkdata" ]; then
+        sudo rm -r docker/data/*
+    fi
+
+    upfresh
+#    cp phpunit.xml.docker phpunit.xml
+    # Waiting from database container fully up
+#    sleep 30
+}
+
+up() {
+    docker-compose up -d
+}
+
+upfresh() {
+    docker-compose up --force-recreate --build -d
+}
+
+start() {
+    docker-compose start
+}
+
+down() {
+    docker-compose down
+}
+
+stop() {
+    docker-compose stop
+}
+
+mysqlcli() {
+    docker exec -it $(get_database_container_id) bash
+}
+
+sql() {
+    docker exec -it $(get_database_container_id) mysql -uroot -ppassword
+}
+
+webcli() {
+    docker exec -it $(get_webserver_container_id) /bin/bash
+}
+
+# small terminal friendly
+ps() {
+  docker ps -a --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.State}}"
+}
+
+### ADVANCED COMMANDS ###
+
+# REQUIRED PARAMETER : database name
+quicksave() {
+  if [ $# -ne 1 ]
+      then
+          echo "Missing database name in command parameters"
+          exit 1
+      fi
+      docker exec -it $(get_database_container_id) bash -c "mysqldump  ${1} > /var/dumps/quickdump.sql"
+}
+
+# REQUIRED PARAMETER : database name
+quickload() {
+  if [ $# -ne 1 ]
+  then
+      echo "Missing database name in command parameters"
+      exit 1
+  fi
+  echo "importing quickdump into database '${1}'"
+  docker exec -it $(get_database_container_id) bash -c "mysql  ${1} < /var/dumps/quickdump.sql"
+  date
+}
+
+# Drops the database $1 and recreates it
+# REQUIRED parameter : database name
+dropcreate () {
+    if [ $# -ne 1 ]
+    then
+        echo "Missing database name in command parameters"
+        exit 1
+    fi
+    echo "Dropping and  recreating database: ${1}"
+    docker exec -it $(get_database_container_id) mysql -e "DROP DATABASE IF EXISTS ${1}; CREATE DATABASE ${1};"
+}
+
+
+
+# Import a dump into a database
+# Use the symlink created at the root of the project to link directly to your ~/Documents/dumps
+# REQUIRED PARAMETER : database name
+# REQUIRED PARAMETER : path/to/file
+dump_import() {
+  if [ $# -ne 2 ]
+      then
+          echo "Missing database name and/or dump file to import."
+          echo "Usage: import_dump databasename containerpath/to/dumpfile"
+          echo "Example: import_dump test dumps/issue-1234/dump.sql"
+          exit 1
+      fi
+  dropcreate $1
+  echo "Importing '${2}' into database '${1}'..."
+  docker exec -it $(get_database_container_id) bash -c "mysql  ${1} < /var/${2}"
+  echo "Done!"
+}
+
+### INTERNAL FUNCTIONS ###
+
+# This function will be called in several others
+get_database_container_id() {
+  echo $(docker ps -aqf "name=$FOLDER\_database" -f status=running --latest);
+}
+
+# This function will be called in several others
+get_webserver_container_id() {
+  echo $(docker ps -aqf "name=$FOLDER\_webserver" -f status=running --latest);
+}
+
+if [ -z "$1" ]; then
+    help
+else
+    "$@"
+fi

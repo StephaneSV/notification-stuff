@@ -1,0 +1,45 @@
+version: '2'
+services:
+    webserver:
+        build:
+            context: docker/apache2
+            dockerfile: Dockerfile
+            args:
+                - PUID=${puid}
+                - PGID=${pgid}
+        ports:
+            - "8080:80"
+            - "443:443"
+        volumes:
+            - .:/var/www/webapp
+            - ./docker/logs/apache2:/var/log/apache2
+#            - ./docker/logs/npm:/home/www/.npm/_logs
+            - ./docker/logs/php:/var/log/php
+            - ./docker/apache2/php/php.ini:/usr/local/etc/php/conf.d/app.ini
+            - ./docker/apache2/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+        extra_hosts:
+            - host.docker.internal:host-gateway
+        depends_on:
+            - database
+
+    database:
+        build: docker/mysql
+        environment:
+            MYSQL_DATABASE: webapp
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./docker/data/mysql:/var/lib/mysql
+            - ./docker/logs/mysql:/var/log/mysql
+#            - ./database/snapshots:/var/snapshots
+            - ./dumps:/var/dumps
+
+    maildev:
+        image: maildev/maildev
+        volumes:
+            - ./docker/data/maildev:/home/maildev/data
+        ports:
+            - "1080:1080"
