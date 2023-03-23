@@ -30,9 +30,9 @@ class ApiResponse implements \JsonSerializable
     private ?string $errors = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    private int $httpStatus = self::HTTP_OK;
+    private ?int $httpStatus = null;
 
     /**
      * @var \stdClass
@@ -68,6 +68,13 @@ class ApiResponse implements \JsonSerializable
         $this->jsonData->endpointTitle = $caller;
     }
 
+    public function setHeaders(int $httpStatus = self::HTTP_OK): void
+    {
+        $this->httpStatus = $httpStatus;
+        header('Content-type: application/json; charset=utf-8');
+        http_response_code($httpStatus);
+    }
+
     /**
      * @return \stdClass
      */
@@ -85,6 +92,10 @@ class ApiResponse implements \JsonSerializable
         if (!isset($result->message)) {
             $result->message = 'Undefined message';
         }
+        if ($this->httpStatus === null) {
+            $this->setHeaders();
+        }
+
 
         // These properties must be kept as-is in jsonData instead of being overwritten
         foreach (['message', 'errors'] as $resultProperty) {

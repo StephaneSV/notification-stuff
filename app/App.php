@@ -14,14 +14,27 @@ class App
     private static bool $initialised = false;
 
     /**
+     * @var $this
+     */
+    private static self $instance;
+
+    /**
+     * @return static
+     */
+    public static function getApp()
+    {
+        return self::$instance;
+    }
+
+    /**
      * @var MySQLConnection
      */
     private MySQLConnection $mySQLConnection;
 
     /**
-     * @var \App\Model\User
+     * @var \App\Model\User|null
      */
-    private User $authUser;
+    private ?User $authUser = null;
 
     /**
      * Initialise the application
@@ -40,14 +53,16 @@ class App
             // The throwable \Exception is not handled here, but should in a prod context (with adequate logging, and http response)
             // end of getAuthenticatedUser
 
+            self::$instance = $this;
+
             self::$initialised = true;
         }
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getAuthUser(): User
+    public function getAuthUser(): ?User
     {
         return $this->authUser;
     }

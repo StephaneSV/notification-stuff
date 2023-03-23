@@ -3,21 +3,24 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
+        'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 USE webapp;
 -- -----------------------------------------------------
 -- Table `artists`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `artists` ;
+DROP TABLE IF EXISTS `artists`;
 
-CREATE TABLE IF NOT EXISTS `artists` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `artists`
+(
+    `id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+    UNIQUE INDEX `name_UNIQUE` (`name` ASC)
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
@@ -26,12 +29,14 @@ CREATE TABLE IF NOT EXISTS `artists` (
 -- -----------------------------------------------------
 -- Table `notification_types`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `notification_types` ;
+DROP TABLE IF EXISTS `notification_types`;
 
-CREATE TABLE IF NOT EXISTS `notification_types` (
-    `id` TINYINT(1) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(31) NOT NULL,
-    PRIMARY KEY (`id`))
+CREATE TABLE IF NOT EXISTS `notification_types`
+(
+    `id`   TINYINT(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(31)         NOT NULL,
+    PRIMARY KEY (`id`)
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
@@ -40,13 +45,15 @@ CREATE TABLE IF NOT EXISTS `notification_types` (
 -- -----------------------------------------------------
 -- Table `content_types`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `content_types` ;
+DROP TABLE IF EXISTS `content_types`;
 
-CREATE TABLE IF NOT EXISTS `content_types` (
-    `id` TINYINT(1) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(31) NOT NULL,
+CREATE TABLE IF NOT EXISTS `content_types`
+(
+    `id`   TINYINT(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(31)         NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+    UNIQUE INDEX `name_UNIQUE` (`name` ASC)
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
@@ -55,12 +62,14 @@ CREATE TABLE IF NOT EXISTS `content_types` (
 -- -----------------------------------------------------
 -- Table `users`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `users` ;
+DROP TABLE IF EXISTS `users`;
 
-CREATE TABLE IF NOT EXISTS `users` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `users`
+(
+    `id`    INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`))
+    PRIMARY KEY (`id`)
+)
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
 
@@ -68,36 +77,39 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- -----------------------------------------------------
 -- Table `notifications`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `notifications` ;
+DROP TABLE IF EXISTS `notifications`;
 
-CREATE TABLE IF NOT EXISTS `notifications` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `notifications`
+(
+    `id`                   INT UNSIGNED        NOT NULL AUTO_INCREMENT,
     `id_notification_type` TINYINT(1) UNSIGNED NOT NULL,
-    `id_user` INT UNSIGNED NOT NULL,
-    `id_content_type` TINYINT(1) UNSIGNED NULL,
-    `id_content` INT UNSIGNED NULL,
-    `expires` DATETIME NULL,
-    `description` TEXT NULL,
-    `new` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+    `id_user`              INT UNSIGNED        NOT NULL,
+    `id_content_type`      TINYINT(1) UNSIGNED NULL,
+    `id_content`           INT UNSIGNED        NULL,
+    `expires`              DATETIME            NULL,
+    `description`          TEXT                NULL,
+    `new`                  TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+    `date_creation`        DATETIME            NULL,
     PRIMARY KEY (`id`),
-    INDEX `IDX_FK_notifications_notification_types` USING BTREE (`id_notification_type`) ,
-    INDEX `IDX_FK_notifications_content_types` (`id_content_type` ASC) ,
-    INDEX `IDX_FK_notifications_users` (`id_user` ASC) ,
+    INDEX `IDX_FK_notifications_notification_types` USING BTREE (`id_notification_type`),
+    INDEX `IDX_FK_notifications_content_types` (`id_content_type` ASC),
+    INDEX `IDX_FK_notifications_users` (`id_user` ASC),
     CONSTRAINT `fk_notifications__notification_types`
-    FOREIGN KEY (`id_notification_type`)
-    REFERENCES `notification_types` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
+        FOREIGN KEY (`id_notification_type`)
+            REFERENCES `notification_types` (`id`)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE,
     CONSTRAINT `fk_notifications__content_types`
-    FOREIGN KEY (`id_content_type`)
-    REFERENCES `content_types` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+        FOREIGN KEY (`id_content_type`)
+            REFERENCES `content_types` (`id`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
     CONSTRAINT `fk_notifications__users`
-    FOREIGN KEY (`id_user`)
-    REFERENCES `users` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+        FOREIGN KEY (`id_user`)
+            REFERENCES `users` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
@@ -106,20 +118,22 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 -- -----------------------------------------------------
 -- Table `albums`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `albums` ;
+DROP TABLE IF EXISTS `albums`;
 
-CREATE TABLE IF NOT EXISTS `albums` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
+CREATE TABLE IF NOT EXISTS `albums`
+(
+    `id`        INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name`      VARCHAR(255) NOT NULL,
     `url_cover` VARCHAR(255) NULL,
     `id_artist` INT UNSIGNED NULL,
     PRIMARY KEY (`id`),
-    INDEX `IDX_FK_albums_artists` (`id_artist` ASC) ,
+    INDEX `IDX_FK_albums_artists` (`id_artist` ASC),
     CONSTRAINT `fk_albums__artists`
-    FOREIGN KEY (`id_artist`)
-    REFERENCES `artists` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+        FOREIGN KEY (`id_artist`)
+            REFERENCES `artists` (`id`)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
@@ -128,12 +142,14 @@ CREATE TABLE IF NOT EXISTS `albums` (
 -- -----------------------------------------------------
 -- Table `playlists`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `playlists` ;
+DROP TABLE IF EXISTS `playlists`;
 
-CREATE TABLE IF NOT EXISTS `playlists` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `playlists`
+(
+    `id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(127) NOT NULL,
-    PRIMARY KEY (`id`))
+    PRIMARY KEY (`id`)
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
@@ -142,20 +158,22 @@ CREATE TABLE IF NOT EXISTS `playlists` (
 -- -----------------------------------------------------
 -- Table `tracks`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `tracks` ;
+DROP TABLE IF EXISTS `tracks`;
 
-CREATE TABLE IF NOT EXISTS `tracks` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `number` SMALLINT(3) UNSIGNED NOT NULL,
-    `title` VARCHAR(255) NOT NULL,
-    `id_album` INT UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `tracks`
+(
+    `id`       INT UNSIGNED         NOT NULL AUTO_INCREMENT,
+    `number`   SMALLINT(3) UNSIGNED NOT NULL,
+    `title`    VARCHAR(255)         NOT NULL,
+    `id_album` INT UNSIGNED         NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `IDX_FK_tracks_albums` (`id_album` ASC) ,
+    INDEX `IDX_FK_tracks_albums` (`id_album` ASC),
     CONSTRAINT `fk_tracks__albums`
-    FOREIGN KEY (`id_album`)
-    REFERENCES `albums` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+        FOREIGN KEY (`id_album`)
+            REFERENCES `albums` (`id`)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
@@ -164,41 +182,45 @@ CREATE TABLE IF NOT EXISTS `tracks` (
 -- -----------------------------------------------------
 -- Table `playlist_track`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `playlist_track` ;
+DROP TABLE IF EXISTS `playlist_track`;
 
-CREATE TABLE IF NOT EXISTS `playlist_track` (
-    `id_playlist` INT UNSIGNED NOT NULL,
-    `id_track` INT UNSIGNED NOT NULL,
-    `position` SMALLINT(4) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `playlist_track`
+(
+    `id_playlist` INT UNSIGNED         NOT NULL,
+    `id_track`    INT UNSIGNED         NOT NULL,
+    `position`    SMALLINT(4) UNSIGNED NOT NULL,
     PRIMARY KEY (`id_playlist`, `id_track`),
-    INDEX `IDX_FK_playlist_track_tracks` (`id_track` ASC) ,
-    INDEX `IDX_FK_playlist_track_playlists` (`id_playlist` ASC) ,
+    INDEX `IDX_FK_playlist_track_tracks` (`id_track` ASC),
+    INDEX `IDX_FK_playlist_track_playlists` (`id_playlist` ASC),
     CONSTRAINT `fk_playlist_track__playlists`
-    FOREIGN KEY (`id_playlist`)
-    REFERENCES `playlists` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
+        FOREIGN KEY (`id_playlist`)
+            REFERENCES `playlists` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
     CONSTRAINT `fk_playlist_track__tracks`
-    FOREIGN KEY (`id_track`)
-    REFERENCES `tracks` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+        FOREIGN KEY (`id_track`)
+            REFERENCES `tracks` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+)
     ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `podcasts`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `podcasts` ;
+DROP TABLE IF EXISTS `podcasts`;
 
-CREATE TABLE IF NOT EXISTS `podcasts` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `podcasts`
+(
+    `id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`))
+    PRIMARY KEY (`id`)
+)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8
     COLLATE = utf8_bin;
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+SET SQL_MODE = @OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;

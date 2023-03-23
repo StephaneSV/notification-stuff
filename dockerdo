@@ -74,6 +74,8 @@ fresh_install() {
 #   cp phpunit.xml.docker phpunit.xml
   echo "Preparing database structure and data"
   sleep 10 # Waiting for DB container to be fully ready
+  rm dumps/db_data.sql
+  rm dumps/db_structure.sql
   cp install/*.sql dumps
   docker exec -it $(get_database_container_id) bash -c "mysql  webapp < /var/dumps/db_structure.sql"
   docker exec -it $(get_database_container_id) bash -c "mysql  webapp < /var/dumps/db_data.sql"
