@@ -30,17 +30,43 @@ help() {
 }
 
 fresh_install() {
+    echo "Fresh install of docker containers: clear everything, build and launch all containers"
     down
     # Clearing all in data, which means wipe of all databases
-    checkdata=$(ls docker/data/)
-    if [ ! -z "$checkdata" ]; then
-        sudo rm -r docker/data/*
+    sudo rm -r docker/data/*
+    # sometimes logs directory is wrongly owned by root, let's make sure everything is ready for use
+    echo "Assigning $USER:$GROUP to log directory"
+    sudo rm -r docker/logs
+    sudo mkdir docker/logs
+    sudo mkdir docker/logs/apache2
+    sudo mkdir docker/logs/mysql
+    sudo mkdir docker/logs/php
+    sudo chown -R $USER:$GROUP docker/logs
+
+    # Creating symlink to ~/Documents/dumps for command import_dump
+    if [ ! -e "dumps" ]; then
+      if [ ! -d "$HOME/Documents/dumps" ]; then
+        echo "Creating directory for dumps: '~/Documents/dumps'"
+        mkdir $HOME/Documents/dumps
+      fi
+      echo "Creating a symbolic link 'dumps' to '~/Documents/dumps'"
+      ln -s $HOME/Documents/dumps dumps
+      echo "INFO: To use dump_import command, please put your database dumps in the directory"
+      echo "      $HOME/Documents/dumps"
+      echo "      Then call the command using the symbolic link created:"
+      echo "      ./dockerdo dump_import dumps/sqldump.sql"
+      sleep 10
+    else
+      if [ ! -L "dumps" ]; then
+        echo "WARNING: you have a 'dumps' directory that is not a symbolic link"
+        echo "         to use dump_import command, put your SQL dumps in this directory"
+        sleep 5
+      fi
     fi
 
     upfresh
-#    cp phpunit.xml.docker phpunit.xml
-    # Waiting from database container fully up
-#    sleep 30
+#   cp phpunit.xml.docker phpunit.xml
+  # project specific code goes here
 }
 
 up() {

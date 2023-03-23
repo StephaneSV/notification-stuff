@@ -36,10 +36,3 @@ services:
             - ./docker/logs/mysql:/var/log/mysql
 #            - ./database/snapshots:/var/snapshots
             - ./dumps:/var/dumps
-
-    maildev:
-        image: maildev/maildev
-        volumes:
-            - ./docker/data/maildev:/home/maildev/data
-        ports:
-            - "1080:1080"
