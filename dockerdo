@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Il a l'air cool ce petit fichier hein ? Je le trimballe de projet en projet et je l'ajuste selon le besoin, il m'est tellement utile.
+# Jetez donc un oeil à quicksave et quickload, mes meilleurs amis.
+
 DATE=$(date +%Y-%m-%d)
 FOLDER=$(basename "echo $PWD")
 # Export User id and Group id for workspace container
@@ -65,8 +68,15 @@ fresh_install() {
     fi
 
     upfresh
-#   cp phpunit.xml.docker phpunit.xml
+    composer_install
+
   # project specific code goes here
+#   cp phpunit.xml.docker phpunit.xml
+  echo "Preparing database structure and data"
+  sleep 10 # Waiting for DB container to be fully ready
+  cp install/*.sql dumps
+  docker exec -it $(get_database_container_id) bash -c "mysql  webapp < /var/dumps/db_structure.sql"
+  docker exec -it $(get_database_container_id) bash -c "mysql  webapp < /var/dumps/db_data.sql"
 }
 
 up() {
@@ -107,6 +117,10 @@ ps() {
 }
 
 ### ADVANCED COMMANDS ###
+
+composer_install() {
+    docker exec -it $(get_webserver_container_id) composer install
+}
 
 # REQUIRED PARAMETER : database name
 quicksave() {
