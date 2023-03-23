@@ -76,8 +76,7 @@ COPY apache/security.conf /etc/apache2/conf-available/security.conf
 RUN a2enconf security.conf
 
 # Install Composer
-#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.2.6
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node.js
 #RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
