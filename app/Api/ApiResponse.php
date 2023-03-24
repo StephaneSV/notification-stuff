@@ -2,8 +2,6 @@
 
 namespace App\Api;
 
-use App\Api\ApiPagination;
-
 class ApiResponse implements \JsonSerializable
 {
     public const HTTP_OK = 200;
@@ -18,11 +16,6 @@ class ApiResponse implements \JsonSerializable
      * @var string|null
      */
     private ?string $message = null;
-
-    /**
-     * @var ApiPagination|null
-     */
-    private ?ApiPagination $pagination = null;
 
     /**
      * @var string|null
@@ -68,11 +61,27 @@ class ApiResponse implements \JsonSerializable
         $this->jsonData->endpointTitle = $caller;
     }
 
+    /**
+     * Cheap header setter for the sake of the exercise
+     * @param int $httpStatus
+     * @return void
+     */
     public function setHeaders(int $httpStatus = self::HTTP_OK): void
     {
         $this->httpStatus = $httpStatus;
         header('Content-type: application/json; charset=utf-8');
         http_response_code($httpStatus);
+    }
+
+    /**
+     * @param string $message
+     * @return $this
+     */
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+
+        return $this;
     }
 
     /**
@@ -108,33 +117,6 @@ class ApiResponse implements \JsonSerializable
             }
         }
 
-        // Now the pagination
-        if ($this->pagination !== null) {
-            $result->pagination = $this->pagination;
-        }
-
         return $result;
-    }
-
-    /**
-     * @param int $page
-     * @param int $perPage
-     * @param int $totalOfElementsToPaginate
-     * @return void
-     */
-    public function setPagination(int $page, int $perPage, int $totalOfElementsToPaginate = 0): void
-    {
-        $this->pagination = new ApiPagination($page, $perPage, $totalOfElementsToPaginate);
-    }
-
-    /**
-     * @param string $message
-     * @return $this
-     */
-    public function setMessage(string $message): self
-    {
-        $this->message = $message;
-
-        return $this;
     }
 }

@@ -30,7 +30,7 @@ VALUES (2345, 'stephanepro@mecontacter.net'),
 INSERT INTO notifications (id, id_notification_type, id_user, id_content_type, id_content, expires, description, new,
                            date_creation)
 VALUES (1, 1, 2345, null, null, '2023-03-20 20:52:29', null, 1, '2023-03-20 20:42:29'),
-       (2, 1, 2345, null, null, null, null, 0, '2023-03-23 20:00:00'),
-       (3, 1, 2345, null, null, '2023-05-23 20:00:00', null, 1, '2023-03-23 20:00:00'),
-       (4, 1, 2345, null, null, '2023-05-24 20:00:00', null, 0, '2022-03-23 20:00:00'),
+       (2, 1, 2345, null, null, null, null, 1, '2023-03-23 20:00:00'),
+       (3, 2, 2345, 1, 1234, '2023-05-23 20:00:00', null, 1, '2023-03-23 20:00:00'),
+       (4, 1, 2345, 3, 101, '2023-05-24 20:00:00', null, 0, '2022-03-23 20:00:00'),
        (5, 1, 4567, null, null, '2023-05-23 20:00:00', null, 1, '2023-03-23 20:00:00');

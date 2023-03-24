@@ -9,15 +9,14 @@ $app->init();
 
 /**
  * Let's consider this is a controller function
- * @param $app
  * @return void
  */
-function getNotifications()
+function getNotificationCounts()
 {
+    // Auth verification
     $app = \App\App::getApp();
     $me = $app->getAuthUser();
-    //    $me = null; // if you want to test the 401 response
-
+    
     if ($me === null) {
         $apiResponse = new ApiResponse([]);
         $apiResponse->setHeaders(ApiResponse::HTTP_UNAUTHORIZED);
@@ -27,12 +26,11 @@ function getNotifications()
     }
 
     $rep = new \App\Repository\NotificationRepositoryMysql($app->getMysqlConnection());
-    $notifications = $rep->getUserNotifications($app->getAuthUser());
+    $counts = $rep->getNotificationCounts($app->getAuthUser());
 
-    header('Content-type: application/json; charset=utf-8');
-    http_response_code(ApiResponse::HTTP_OK);
-    $response = new ApiResponse(['data' => $notifications]);
-    echo json_encode($response);
+    $apiResponse = new ApiResponse(['data' => $counts]);
+    $apiResponse->setMessage('Notification counts for auth user');
+    echo json_encode($apiResponse);
 }
 
-getNotifications();
+getNotificationCounts();
