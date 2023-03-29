@@ -1,7 +1,7 @@
 <html>
 <head>Links</head>
 <body>
-<p>Avec le jeu de données de départ, il y a 4 notifications pour le user connecté : 1 expirée, 2 lues, et 1 non lue.</p>
+<p>Avec le jeu de données de départ, il y a 4 notifications pour le user connecté : 1 expirée, 2 non lues, et 1 lue.</p>
 <p>Notification counts : <a href="getNotificationCounts.php" target="_blank">getNotificationCounts</a></p>
 <p>Notifications : <a href="getNotifications.php" target="_blank">getNotifications</a></p>
 <p>Notification patch mark as read (403) : <a
